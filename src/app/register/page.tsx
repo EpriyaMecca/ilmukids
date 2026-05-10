@@ -2,19 +2,57 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Nanti disambungkan ke Supabase
-    console.log("Register:", { name, email, password });
-    setTimeout(() => setIsLoading(false), 2000); // simulasi loading
+    setMessage("");
+
+    // Validasi sederhana
+    if (!name || !email || !password) {
+      setMessage("Semua kolom wajib diisi!");
+      setIsError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setMessage("Password minimal 8 karakter!");
+      setIsError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    // Kirim ke Supabase
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: name,
+          role: "guru",
+        },
+      },
+    });
+
+    if (error) {
+      setMessage(error.message);
+      setIsError(true);
+    } else {
+      setMessage("✅ Pendaftaran berhasil! Cek email kamu untuk verifikasi.");
+      setIsError(false);
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -33,15 +71,22 @@ export default function RegisterPage() {
         {/* Card */}
         <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
 
-          {/* Header card */}
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-800">Buat Akun Guru 👨‍🏫</h2>
-            <p className="text-gray-500 text-sm mt-1">
-              Gratis selamanya. Mulai dalam 1 menit.
-            </p>
+            <p className="text-gray-500 text-sm mt-1">Gratis selamanya. Mulai dalam 1 menit.</p>
           </div>
 
-          {/* Form */}
+          {/* Pesan sukses / error */}
+          {message && (
+            <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
+              isError
+                ? "bg-red-50 text-red-600 border border-red-200"
+                : "bg-green-50 text-green-600 border border-green-200"
+            }`}>
+              {message}
+            </div>
+          )}
+
           <div className="space-y-4">
 
             {/* Nama */}
@@ -86,7 +131,7 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Tombol Submit */}
+            {/* Submit */}
             <button
               onClick={handleSubmit}
               disabled={isLoading}
@@ -97,14 +142,12 @@ export default function RegisterPage() {
 
           </div>
 
-          {/* Divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-gray-200"></div>
             <span className="text-gray-400 text-sm">atau</span>
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
-          {/* Link ke Login */}
           <p className="text-center text-gray-500 text-sm">
             Sudah punya akun?{" "}
             <Link href="/login" className="text-green-600 font-semibold hover:underline">
@@ -114,7 +157,6 @@ export default function RegisterPage() {
 
         </div>
 
-        {/* Trust badge */}
         <p className="text-center text-gray-400 text-xs mt-4">
           🔒 Data kamu aman. Tidak ada spam.
         </p>
