@@ -47,32 +47,6 @@ export default function DashboardGuru() {
   return (
     <main className="min-h-screen bg-gray-50">
 
-      {/* Header Dashboard */}
-      <div className="bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">🕌</span>
-            <div>
-              <h1 className="text-lg font-bold text-gray-800">
-                Ilmu<span className="text-yellow-500">Kids</span>
-              </h1>
-              <p className="text-xs text-gray-500">Panel Guru</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-semibold text-gray-800">{namaGuru}</p>
-              <p className="text-xs text-gray-500">Guru</p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
-            >
-              Keluar
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Konten Dashboard */}
       <div className="max-w-6xl mx-auto px-4 py-8">

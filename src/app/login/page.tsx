@@ -51,6 +51,7 @@ export default function LoginPage() {
       const userRole = data.user?.user_metadata?.role;
       if (userRole === "guru") {
         router.push("/dashboard/guru");
+        router.refresh
       } else {
         router.push("/dashboard");
       }
