@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-yellow-50">
+    <main className="pt-16 min-h-screen bg-gradient-to-br from-green-50 via-white to-yellow-50">
       
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-4 pt-20 pb-16 flex flex-col items-center text-center">
