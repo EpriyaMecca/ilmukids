@@ -42,8 +42,16 @@ export default function MainQuiz() {
   const [waktuSisa, setWaktuSisa] = useState(0);
   const [xpDapat, setXpDapat] = useState(0);
 
+  const [userSession, setUserSession] = useState<any>(null);
+
   useEffect(() => {
     const loadQuiz = async () => {
+
+      const { data: { session } } = await supabase.auth.getSession();
+setUserSession(session);
+
+// const { data: { session: currentSession } } = await supabase.auth.getSession();
+// setUserSession(currentSession);
       // Load quiz info
       const { data: quizData } = await supabase
         .from("quiz")
@@ -104,18 +112,15 @@ export default function MainQuiz() {
     if (isBenar) setJumlahBenar((prev) => prev + 1);
   };
 
-  const handleSoalBerikutnya = async () => {
+const handleSoalBerikutnya = async () => {
   if (soalIndex + 1 >= soalList.length) {
     const xp = Math.round((jumlahBenar / soalList.length) * (quiz?.total_xp || 100));
-    setXpDapat(xp);
 
-    // Simpan hasil ke database
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       const email = session.user.email || "";
       const username = email.replace("@ilmukids.app", "");
 
-      // Ambil data siswa
       const { data: siswaData } = await supabase
         .from("siswa")
         .select("id, xp, level")
@@ -123,24 +128,38 @@ export default function MainQuiz() {
         .single();
 
       if (siswaData) {
-        const xpBaru = siswaData.xp + xp;
-        const levelBaru = Math.floor(xpBaru / 500) + 1;
+        // Cek apakah sudah pernah kerjakan quiz ini
+        const { data: sudahPernah } = await supabase
+          .from("hasil_quiz")
+          .select("id")
+          .eq("siswa_id", siswaData.id)
+          .eq("quiz_id", quizId)
+          .single();
 
-        // Update XP dan level siswa
-        await supabase
-          .from("siswa")
-          .update({ xp: xpBaru, level: levelBaru })
-          .eq("id", siswaData.id);
+        if (!sudahPernah) {
+          // Pertama kali → dapat XP penuh
+          const xpBaru = siswaData.xp + xp;
+          const levelBaru = Math.floor(xpBaru / 500) + 1;
 
-        // Simpan hasil quiz
-        await supabase.from("hasil_quiz").insert({
-          siswa_id: siswaData.id,
-          quiz_id: quizId,
-          skor: Math.round((jumlahBenar / soalList.length) * 100),
-          xp_didapat: xp,
-          jumlah_benar: jumlahBenar,
-          jumlah_salah: soalList.length - jumlahBenar,
-        });
+          await supabase
+            .from("siswa")
+            .update({ xp: xpBaru, level: levelBaru })
+            .eq("id", siswaData.id);
+
+          await supabase.from("hasil_quiz").insert({
+            siswa_id: siswaData.id,
+            quiz_id: quizId,
+            skor: Math.round((jumlahBenar / soalList.length) * 100),
+            xp_didapat: xp,
+            jumlah_benar: jumlahBenar,
+            jumlah_salah: soalList.length - jumlahBenar,
+          });
+
+          setXpDapat(xp);
+        } else {
+          // Sudah pernah → tidak dapat XP
+          setXpDapat(0);
+        }
       }
     }
 
@@ -210,43 +229,64 @@ export default function MainQuiz() {
   }
 
   // ─── RESULT ───
-  if (gameState === "result") {
-    const persentase = Math.round((jumlahBenar / soalList.length) * 100);
-    const emoji = persentase >= 80 ? "🏆" : persentase >= 60 ? "⭐" : "💪";
-    const pesan = persentase >= 80 ? "Luar Biasa!" : persentase >= 60 ? "Bagus!" : "Tetap Semangat!";
+if (gameState === "result") {
+  const persentase = soalList.length > 0 
+    ? Math.round((jumlahBenar / soalList.length) * 100) 
+    : 0;
+  const emoji = persentase >= 80 ? "🏆" : persentase >= 60 ? "⭐" : "💪";
+  const pesan = persentase >= 80 ? "Luar Biasa!" : persentase >= 60 ? "Bagus!" : "Tetap Semangat!";
 
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-yellow-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center border border-gray-100">
-          <div className="text-7xl mb-4">{emoji}</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-1">{pesan}</h1>
-          <p className="text-gray-500 mb-8">Quiz selesai!</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-yellow-50 flex items-center justify-center px-4">
+      <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center border border-gray-100">
+        
+        <div className="text-7xl mb-4">{emoji}</div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-1">{pesan}</h1>
+        <p className="text-gray-500 mb-8">Quiz selesai!</p>
 
-          <div className="bg-gray-50 rounded-2xl p-6 mb-6 space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Jawaban Benar</span>
-              <span className="font-bold text-green-600">{jumlahBenar}/{soalList.length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Skor</span>
-              <span className="font-bold text-gray-800">{persentase}%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">XP Didapat</span>
-              <span className="font-bold text-yellow-500">+{xpDapat} XP ⭐</span>
-            </div>
+        <div className="bg-gray-50 rounded-2xl p-6 mb-4 space-y-3 text-left">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Jawaban Benar</span>
+            <span className="font-bold text-green-600">{jumlahBenar}/{soalList.length}</span>
           </div>
-
-          <button
-            onClick={() => router.push("/")}
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-lg shadow-green-200"
-          >
-            🏠 Kembali ke Beranda
-          </button>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Skor</span>
+            <span className="font-bold text-gray-800">{persentase}%</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500">XP Didapat</span>
+            {xpDapat > 0 ? (
+              <span className="font-bold text-yellow-500">+{xpDapat} XP ⭐</span>
+            ) : (
+              <span className="font-bold text-gray-400">Sudah dikerjakan ✓</span>
+            )}
+          </div>
         </div>
+
+        {xpDapat === 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-4 text-sm text-blue-700 text-center">
+            💡 Kamu sudah pernah mengerjakan quiz ini. XP hanya diberikan sekali!
+          </div>
+        )}
+
+        <button
+          onClick={() => {
+            const email = userSession?.user?.email || "";
+            if (email.includes("@ilmukids.app")) {
+              router.push("/dashboard/siswa");
+            } else {
+              router.push("/");
+            }
+          }}
+          className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-lg shadow-green-200"
+        >
+          🏠 Kembali ke Beranda
+        </button>
+
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   // ─── PLAYING ───
   return (

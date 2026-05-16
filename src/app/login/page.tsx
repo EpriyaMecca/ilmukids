@@ -52,9 +52,22 @@ export default function LoginPage() {
         router.push("/dashboard");
       }
     } else {
-      // Login siswa — akan kita sambungkan nanti
-      setMessage("Login siswa segera hadir! 🚧");
-    }
+  // Login siswa pakai username → convert ke email fake
+  const emailFake = `${username.toLowerCase()}@ilmukids.app`;
+  
+  const { error } = await supabase.auth.signInWithPassword({
+    email: emailFake,
+    password,
+  });
+
+  if (error) {
+    setMessage("Username atau password salah. Coba lagi!");
+    setIsLoading(false);
+    return;
+  }
+
+  router.push("/dashboard/siswa");
+}
 
     setIsLoading(false);
   };
