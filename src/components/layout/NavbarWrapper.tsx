@@ -6,10 +6,10 @@ import Navbar from "./Navbar";
 export default function NavbarWrapper() {
   const pathname = usePathname();
   
-  // Sembunyikan navbar di halaman dashboard DAN quiz
   const hideNavbar = 
     pathname?.startsWith("/dashboard") || 
-    pathname?.startsWith("/quiz");
+    pathname?.startsWith("/quiz") ||
+    pathname?.startsWith("/leaderboard");
   
   if (hideNavbar) return null;
   
