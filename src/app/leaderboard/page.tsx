@@ -112,9 +112,7 @@ export default function LeaderboardPage() {
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/dashboard/siswa" className="text-gray-500 hover:text-gray-700">
-            ← Kembali
-          </Link>
+         <button onClick={() => router.back()} className="text-gray-500 hover:text-gray-700"> ← Kembali</button>
           <h1 className="font-bold text-gray-800">🏆 Leaderboard</h1>
           <div className="w-16"></div>
         </div>
