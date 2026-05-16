@@ -28,11 +28,7 @@ export default function LoginPage() {
       return;
     }
 
-    if (role === "siswa" && (!username || !password)) {
-      setMessage("Username dan password wajib diisi!");
-      setIsLoading(false);
-      return;
-    }
+    role === "siswa"
 
     if (role === "guru") {
       // Login guru pakai email
