@@ -104,18 +104,53 @@ export default function MainQuiz() {
     if (isBenar) setJumlahBenar((prev) => prev + 1);
   };
 
-  const handleSoalBerikutnya = () => {
-    if (soalIndex + 1 >= soalList.length) {
-      // Hitung XP
-      const xp = Math.round((jumlahBenar / soalList.length) * (quiz?.total_xp || 100));
-      setXpDapat(xp);
-      setGameState("result");
-    } else {
-      setSoalIndex((prev) => prev + 1);
-      setPilihanDipilih(null);
-      setSudahJawab(false);
+  const handleSoalBerikutnya = async () => {
+  if (soalIndex + 1 >= soalList.length) {
+    const xp = Math.round((jumlahBenar / soalList.length) * (quiz?.total_xp || 100));
+    setXpDapat(xp);
+
+    // Simpan hasil ke database
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const email = session.user.email || "";
+      const username = email.replace("@ilmukids.app", "");
+
+      // Ambil data siswa
+      const { data: siswaData } = await supabase
+        .from("siswa")
+        .select("id, xp, level")
+        .eq("username", username)
+        .single();
+
+      if (siswaData) {
+        const xpBaru = siswaData.xp + xp;
+        const levelBaru = Math.floor(xpBaru / 500) + 1;
+
+        // Update XP dan level siswa
+        await supabase
+          .from("siswa")
+          .update({ xp: xpBaru, level: levelBaru })
+          .eq("id", siswaData.id);
+
+        // Simpan hasil quiz
+        await supabase.from("hasil_quiz").insert({
+          siswa_id: siswaData.id,
+          quiz_id: quizId,
+          skor: Math.round((jumlahBenar / soalList.length) * 100),
+          xp_didapat: xp,
+          jumlah_benar: jumlahBenar,
+          jumlah_salah: soalList.length - jumlahBenar,
+        });
+      }
     }
-  };
+
+    setGameState("result");
+  } else {
+    setSoalIndex((prev) => prev + 1);
+    setPilihanDipilih(null);
+    setSudahJawab(false);
+  }
+};
 
   const soalSekarang = soalList[soalIndex];
   const progress = soalList.length > 0 ? ((soalIndex) / soalList.length) * 100 : 0;
