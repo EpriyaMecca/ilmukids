@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useQuizSound } from "@/hooks/useQuizSound";
 
 type Pilihan = {
   id: string;
@@ -43,6 +44,7 @@ export default function MainQuiz() {
   const [xpDapat, setXpDapat] = useState(0);
 
   const [userSession, setUserSession] = useState<any>(null);
+  const { playBenar, playSalah, playSelesai } = useQuizSound();
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -50,8 +52,6 @@ export default function MainQuiz() {
       const { data: { session } } = await supabase.auth.getSession();
 setUserSession(session);
 
-// const { data: { session: currentSession } } = await supabase.auth.getSession();
-// setUserSession(currentSession);
       // Load quiz info
       const { data: quizData } = await supabase
         .from("quiz")
@@ -106,11 +106,16 @@ setUserSession(session);
   };
 
   const handlePilihJawaban = (pilihanId: string, isBenar: boolean) => {
-    if (sudahJawab) return;
-    setPilihanDipilih(pilihanId);
-    setSudahJawab(true);
-    if (isBenar) setJumlahBenar((prev) => prev + 1);
-  };
+  if (sudahJawab) return;
+  setPilihanDipilih(pilihanId);
+  setSudahJawab(true);
+  if (isBenar) {
+    setJumlahBenar((prev) => prev + 1);
+    playBenar(); // ← tambah ini
+  } else {
+    playSalah(); // ← tambah ini
+  }
+};
 
 const handleSoalBerikutnya = async () => {
   if (soalIndex + 1 >= soalList.length) {
@@ -163,6 +168,7 @@ const handleSoalBerikutnya = async () => {
       }
     }
 
+    playSelesai(); // ← tambah sebelum setGameState
     setGameState("result");
   } else {
     setSoalIndex((prev) => prev + 1);
