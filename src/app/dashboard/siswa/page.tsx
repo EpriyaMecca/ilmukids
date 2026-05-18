@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
+import ThemeToggle from "@/components/theme-toggle";
+
 type QuizCard = {
   id: string;
   judul_quiz: string;
@@ -108,12 +110,17 @@ export default function DashboardSiswa() {
             </Link>
           </div>
           <div className="flex items-center gap-3">
+
+              <ThemeToggle />
+
             <span className={`text-xs px-3 py-1 rounded-full font-semibold ${badge.warna}`}>
               {badge.icon} {badge.nama}
             </span>
+
             <button onClick={handleLogout} className="text-sm text-red-500 hover:text-red-700 font-medium">
               Keluar
             </button>
+            
           </div>
         </div>
       </nav>
