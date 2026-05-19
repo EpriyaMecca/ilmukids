@@ -3,8 +3,6 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
 
-import { ThemeProvider } from "next-themes";
-
 const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,14 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id">
       <body className={geist.className}>
-        
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <NavbarWrapper />
-          {children}
-        </ThemeProvider>
-
+        <NavbarWrapper />
+        {children}
       </body>
     </html>
   );
