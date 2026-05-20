@@ -18,9 +18,7 @@ const stagger = {
 
 export default function Home() {
   return (
-    <main className="pt-16 min-h-screen bg-gradient-to-br from-green-50 via-white to-yellow-50">
-
-      {/* Hero Section */}
+<main className="pt-16 min-h-screen bg-gradient-to-br from-green-50 via-white to-yellow-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">      {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-4 pt-20 pb-16 flex flex-col items-center text-center">
 
         {/* Badge */}
@@ -39,7 +37,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl md:text-6xl font-bold text-gray-800 mb-6 leading-tight"
+          className="text-5xl md:text-6xl font-bold text-gray-800 dark:text-gray-300 mb-6 leading-tight"
         >
           Belajar Islam
           <span className="text-green-500"> Sambil </span>
@@ -74,7 +72,7 @@ export default function Home() {
           </Link>
           <Link
             href="/login"
-            className="bg-white hover:bg-gray-50 text-gray-700 px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-md border border-gray-200 hover:scale-105"
+            className="bg-white hover:bg-gray-50 text-gray-700 px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:shadow-gray-200 hover:scale-105"
           >
             🎮 Masuk Sekarang
           </Link>
@@ -108,9 +106,9 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-3xl font-bold text-center text-gray-800 mb-12"
+          className="text-3xl font-bold text-center text-gray-800 mb-12 dark:text-white"
         >
-          Kenapa IlmuKids? 🌟
+        Kenapa IlmuKids? 🌟
         </motion.h2>
 
         <motion.div
@@ -144,11 +142,10 @@ export default function Home() {
               key={i}
               variants={fadeUp}
               whileHover={{ y: -8, scale: 1.02 }}
-              className={`${card.warna} rounded-2xl p-6 shadow-sm border hover:shadow-md transition-shadow`}
-            >
+className={`${card.warna} rounded-2xl p-6 shadow-sm border hover:shadow-md transition-shadow dark:bg-slate-700 dark:border-slate-600`}            >
               <div className="text-4xl mb-4">{card.icon}</div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{card.judul}</h3>
-              <p className="text-gray-500">{card.deskripsi}</p>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{card.judul}</h3>
+              <p className="text-gray-500 dark:text-gray-300">{card.deskripsi}</p>
             </motion.div>
           ))}
         </motion.div>

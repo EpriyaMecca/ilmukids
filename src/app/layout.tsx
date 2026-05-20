@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
+import Providers from "@/components/providers";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -16,10 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <body className={geist.className}>
-        <NavbarWrapper />
-        {children}
+        <Providers>
+          <NavbarWrapper />
+          {children}
+          <ThemeToggle />
+        </Providers>
       </body>
     </html>
   );
