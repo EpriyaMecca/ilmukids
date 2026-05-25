@@ -105,42 +105,31 @@ className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text
         </div>
 
         {/* Conditional Auth */}
-        <div className="hidden md:flex items-center gap-3">
-
-          {isLogin ? (
-            <>
-              <div className="text-right">
-<p className="text-sm font-semibold text-gray-800 dark:text-white">                  {namaGuru}
-                </p>
-
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Guru
-                </p>
-              </div>
-
-              <button
-                onClick={handleLogout}
-className="bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-xl text-sm font-medium transition-all"              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-medium transition-colors"              >
-                Masuk
-              </Link>
-
-              <Link
-                href="/register"
-className="bg-green-500 hover:bg-green-600 dark:bg-green-400 dark:hover:bg-green-500 text-white px-4 py-2 rounded-full font-medium transition-all shadow-lg shadow-green-500/20 hover:scale-105"              >
-                Daftar Gratis
-              </Link>
-            </>
-          )}
-
-        </div>
+      {isLogin ? (
+  <>
+    <Link
+      href="/dashboard/guru"
+      className="text-sm font-medium text-gray-600 hover:text-green-600 transition-colors"
+    >
+      Dashboard →
+    </Link>
+    <button
+      onClick={handleLogout}
+      className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+    >
+      Logout
+    </button>
+  </>
+) : (
+  <>
+    <Link href="/login" className="text-gray-600 hover:text-green-600 font-medium transition-colors">
+      Masuk
+    </Link>
+    <Link href="/register" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition-colors">
+      Daftar Gratis
+    </Link>
+  </>
+)}
 
         {/* Hamburger Mobile */}
         <button

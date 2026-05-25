@@ -17,60 +17,55 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage("");
+  e.preventDefault();
+  setIsLoading(true);
+  setMessage("");
 
-    // Validasi
-    if (role === "guru" && (!email || !password)) {
+  if (role === "guru") {
+    if (!email || !password) {
       setMessage("Email dan password wajib diisi!");
       setIsLoading(false);
       return;
     }
 
-    role === "siswa"
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (role === "guru") {
-      // Login guru pakai email
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    if (error) {
+      setMessage("Email atau password salah. Coba lagi!");
+      setIsLoading(false);
+      return;
+    }
 
-      if (error) {
-        setMessage("Email atau password salah. Coba lagi!");
-        setIsLoading(false);
-        return;
-      }
+    router.push("/dashboard/guru");
 
-      // Cek role dari metadata
-      const userRole = data.user?.user_metadata?.role;
-      if (userRole === "guru") {
-        router.push("/dashboard/guru");
-        router.refresh
-      } else {
-        router.push("/dashboard");
-      }
-    } else {
-  // Login siswa pakai username → convert ke email fake
-  const emailFake = `${username.toLowerCase()}@ilmukids.app`;
-  
-  const { error } = await supabase.auth.signInWithPassword({
-    email: emailFake,
-    password,
-  });
+  } else {
+    if (!username || !password) {
+      setMessage("Username dan password wajib diisi!");
+      setIsLoading(false);
+      return;
+    }
 
-  if (error) {
-    setMessage("Username atau password salah. Coba lagi!");
-    setIsLoading(false);
-    return;
+    const emailFake = `${username.toLowerCase()}@ilmukids.app`;
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: emailFake,
+      password,
+    });
+
+    if (error) {
+      setMessage("Username atau password salah. Coba lagi!");
+      setIsLoading(false);
+      return;
+    }
+
+    router.push("/dashboard/siswa");
   }
 
-  router.push("/dashboard/siswa");
-}
-
-    setIsLoading(false);
-  };
+  setIsLoading(false);
+};
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-yellow-50 flex items-center justify-center px-4">
