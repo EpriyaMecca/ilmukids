@@ -10,6 +10,7 @@ const menuItems = [
   { href: "/dashboard/guru/siswa", icon: "👦", label: "Daftar Siswa" },
   { href: "/dashboard/guru/kelas", icon: "🏫", label: "Kelas" },
   { href: "/dashboard/guru/quiz", icon: "📝", label: "Quiz" },
+  { href: "/dashboard/guru/memory-card", icon: "🧠", label: "Memory Card" },
   { href: "/dashboard/guru/nilai", icon: "📊", label: "Nilai & Progress" },
 ];
 

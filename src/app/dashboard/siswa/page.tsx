@@ -175,25 +175,37 @@ export default function DashboardSiswa() {
         </div>
 
         {/* Quick Links */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Link
-            href="/leaderboard"
-            className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-5 text-white flex items-center gap-3 hover:shadow-lg transition-all hover:scale-105"
-          >
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🏆</div>
-            <div>
-              <p className="font-bold">Leaderboard</p>
-              <p className="text-xs text-yellow-100">Lihat peringkat kamu</p>
-            </div>
-          </Link>
-          <div className="bg-gradient-to-r from-purple-400 to-purple-500 rounded-2xl p-5 text-white flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🎖️</div>
-            <div>
-              <p className="font-bold">Rank #{level}</p>
-              <p className="text-xs text-purple-100">{badge.icon} {badge.nama}</p>
-            </div>
-          </div>
-        </div>
+<div className="grid grid-cols-3 gap-4 mb-6">
+  <Link
+    href="/leaderboard"
+    className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-5 text-white flex items-center gap-3 hover:shadow-lg transition-all hover:scale-105"
+  >
+    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🏆</div>
+    <div>
+      <p className="font-bold text-sm">Leaderboard</p>
+      <p className="text-xs text-yellow-100">Lihat peringkat</p>
+    </div>
+  </Link>
+
+  <Link
+    href="/games"
+    className="bg-gradient-to-r from-purple-400 to-purple-600 rounded-2xl p-5 text-white flex items-center gap-3 hover:shadow-lg transition-all hover:scale-105"
+  >
+    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🎮</div>
+    <div>
+      <p className="font-bold text-sm">Mini Games</p>
+      <p className="text-xs text-purple-100">Memory card & more</p>
+    </div>
+  </Link>
+
+  <div className="bg-gradient-to-r from-blue-400 to-blue-500 rounded-2xl p-5 text-white flex items-center gap-3">
+    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🎖️</div>
+    <div>
+      <p className="font-bold text-sm">Rank #{level}</p>
+      <p className="text-xs text-blue-100">{badge.icon} {badge.nama}</p>
+    </div>
+  </div>
+</div>
 
         {/* XP Progress Bar */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">

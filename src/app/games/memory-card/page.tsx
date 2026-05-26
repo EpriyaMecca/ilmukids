@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 type Card = {
   id: number;
@@ -42,9 +43,50 @@ export default function MemoryCardGame() {
   const [waktu, setWaktu] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [selesai, setSelesai] = useState(false);
+  const [kategoriDipilih, setKategoriDipilih] = useState("dzikir");
+const [gameReady, setGameReady] = useState(false);
 
-  useEffect(() => { setKartu(buatKartu()); }, []);
+  function buatKartuDariData(data: any[]): Card[] {
+  const list: Card[] = [];
+  data.forEach((item, index) => {
+    list.push({
+      id: 0,
+      content: item.soal,
+      type: "soal",
+      pairId: index + 1,
+      isFlipped: false,
+      isMatched: false,
+    });
+    list.push({
+      id: 0,
+      content: item.jawaban,
+      type: "jawaban",
+      pairId: index + 1,
+      isFlipped: false,
+      isMatched: false,
+    });
+  });
+  return list
+    .sort(() => Math.random() - 0.5)
+    .map((k, i) => ({ ...k, id: i }));
+}
 
+useEffect(() => {
+  const loadKartu = async () => {
+    const { data } = await supabase
+      .from("memory_card_soal")
+      .select("*")
+      .limit(6);
+
+    if (data && data.length > 0) {
+      const kartuBaru = buatKartuDariData(data);
+      setKartu(kartuBaru);
+    } else {
+      setKartu(buatKartu());
+    }
+  };
+  loadKartu();
+}, []);
   useEffect(() => {
     if (!gameStarted || selesai) return;
     const t = setInterval(() => setWaktu(w => w + 1), 1000);
